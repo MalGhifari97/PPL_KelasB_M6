@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const CartItem = require('../models/CartItem');
 const Product = require('../models/Product');
+const { randomBytes } = require('crypto');
 
 function createServiceError(message, statusCode) {
   const error = new Error(message);
@@ -63,6 +64,11 @@ async function getCart(connection, transactionId) {
      WHERE id = ?`,
     [transactionId]
   );
+
+  if (!transactionRows.length) {
+    throw createServiceError('Transaksi tidak ditemukan', 404);
+  }
+
   const [itemRows] = await connection.execute(
         `SELECT ti.id, ti.transaction_id, ti.product_id, ti.quantity, ti.unit_price,
           p.code, p.name, p.category, p.unit, p.price, p.stock, p.is_active
@@ -97,6 +103,29 @@ async function getCart(connection, transactionId) {
     ...transactionRows[0],
     items
   };
+}
+
+async function createDraftTransaction({ cashier_name = 'Kasir Utama', payment_timing = 'upfront' } = {}) {
+  if (!['upfront', 'end'].includes(payment_timing)) {
+    throw createServiceError('payment_timing harus bernilai upfront atau end', 400);
+  }
+
+  return withTransaction(async (connection) => {
+    const transactionNumber = `TRX-${Date.now()}-${randomBytes(3).toString('hex')}`;
+    const [result] = await connection.execute(
+      `INSERT INTO transactions
+         (transaction_number, cashier_name, payment_timing, payment_status,
+          subtotal, discount_amount, total)
+       VALUES (?, ?, ?, 'unpaid', 0, 0, 0)`,
+      [transactionNumber, cashier_name, payment_timing]
+    );
+
+    return getCart(connection, result.insertId);
+  });
+}
+
+async function getDraftTransaction(transactionId) {
+  return getCart(db, transactionId);
 }
 
 async function addToCart(transactionId, productId) {
@@ -210,4 +239,10 @@ async function removeItem(transactionId, itemId) {
   });
 }
 
-module.exports = { addToCart, updateQty, removeItem };
+module.exports = {
+  createDraftTransaction,
+  getDraftTransaction,
+  addToCart,
+  updateQty,
+  removeItem
+};

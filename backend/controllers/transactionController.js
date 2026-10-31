@@ -1,13 +1,19 @@
-const { addToCart, updateQty, removeItem } = require('../services/cartService');
+const {
+	createDraftTransaction,
+	getDraftTransaction,
+	addToCart,
+	updateQty,
+	removeItem
+} = require('../services/cartService');
 
 function isPositiveId(value) {
 	return /^[1-9]\d*$/.test(String(value));
 }
 
-async function sendCartResponse(res, message, operation) {
+async function sendCartResponse(res, message, operation, successStatus = 200) {
 	try {
 		const data = await operation();
-		return res.json({ success: true, message, data });
+		return res.status(successStatus).json({ success: true, message, data });
 	} catch (error) {
 		const statusCode = error.statusCode || 500;
 		return res.status(statusCode).json({
@@ -17,6 +23,41 @@ async function sendCartResponse(res, message, operation) {
 		});
 	}
 }
+
+exports.createDraftTransaction = async (req, res) => {
+	const { cashier_name = 'Kasir Utama', payment_timing = 'upfront' } = req.body || {};
+
+	if (typeof cashier_name !== 'string' || cashier_name.trim().length === 0) {
+		return res.status(400).json({
+			success: false,
+			message: 'cashier_name harus berupa teks dan tidak boleh kosong',
+			data: null
+		});
+	}
+
+	return sendCartResponse(
+		res,
+		'Keranjang berhasil dibuat',
+		() => createDraftTransaction({ cashier_name: cashier_name.trim(), payment_timing }),
+		201
+	);
+};
+
+exports.getDraftTransaction = async (req, res) => {
+	const { transactionId } = req.params;
+
+	if (!isPositiveId(transactionId)) {
+		return res.status(400).json({
+			success: false,
+			message: 'transactionId harus berupa ID positif',
+			data: null
+		});
+	}
+
+	return sendCartResponse(res, 'Keranjang berhasil dimuat', () =>
+		getDraftTransaction(transactionId)
+	);
+};
 
 exports.addToCart = async (req, res) => {
 	const { transactionId } = req.params;
