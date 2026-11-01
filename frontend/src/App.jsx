@@ -9,46 +9,51 @@ const products = [
     name: "Beras Pandan Wangi 5kg",
     price: 75000,
     code: "KOD-001",
-    category: "Semua Produk",
+    category: "Bahan Pokok",
   },
   {
     id: 2,
     name: "Minyak Goreng Sawit 2L",
     price: 34000,
     code: "KOD-002",
-    category: "Semua Produk",
+    category: "Bahan Pokok",
   },
   {
     id: 3,
     name: "Gula Pasir Putih 1kg",
     price: 17500,
     code: "KOD-003",
-    category: "Semua Produk",
+    category: "Bahan Pokok",
   },
   {
     id: 4,
     name: "Kopi Bubuk Robusta 250g",
     price: 25000,
     code: "KOD-004",
-    category: "Semua Produk",
+    category: "Minuman & Kopi",
   },
   {
     id: 5,
     name: "Teh Celup Kotak 25s",
     price: 8500,
     code: "KOD-005",
-    category: "Semua Produk",
+    category: "Minuman & Kopi",
   },
   {
     id: 6,
     name: "Susu UHT Cokelat 1L",
     price: 21000,
     code: "KOD-006",
-    category: "Semua Produk",
+    category: "Susu",
   },
 ];
 
-const tabs = ["Semua Produk", "Bahan Pokok", "Minuman & Kopi", "Susu"];
+const tabs = [
+  "Semua Produk",
+  "Bahan Pokok",
+  "Minuman & Kopi",
+  "Susu",
+];
 
 function App() {
   const [search, setSearch] = useState("");
@@ -71,19 +76,24 @@ function App() {
   ]);
 
   // Mode Halaman: "pos" | "transaksi" | "success"
-  const [pageMode, setPageMode] = useState("transaksi"); 
+  const [pageMode, setPageMode] = useState("pos"); 
   const [transactionData, setTransactionData] = useState(null);
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const matchesSearch = product.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const matchesTab =
-        activeTab === "Semua Produk" || product.category === activeTab;
-      return matchesSearch && matchesTab;
-    });
-  }, [search, activeTab]);
+  return products.filter((product) => {
+    const keyword = search.toLowerCase();
+
+    const matchesSearch =
+      product.name.toLowerCase().includes(keyword) ||
+      product.code.toLowerCase().includes(keyword);
+
+    const matchesTab =
+      activeTab === "Semua Produk" ||
+      product.category === activeTab;
+
+    return matchesSearch && matchesTab;
+  });
+}, [search, activeTab]);
 
   const addToCart = (product) => {
     setCart((currentCart) => {
