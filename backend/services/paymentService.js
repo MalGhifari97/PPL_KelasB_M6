@@ -16,6 +16,14 @@ function toIsoString(value) {
   return value instanceof Date ? value.toISOString() : value;
 }
 
+// Menerima angka atau string angka; nilai kosong/objek dianggap tidak valid.
+// Number('') dan Number([]) bernilai 0, jadi tidak boleh dipakai langsung.
+function parseNominal(value) {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string' && value.trim() !== '') return Number(value.trim());
+  return Number.NaN;
+}
+
 // Kembalian = uang diterima - total tagihan.
 // Fungsi murni agar mudah diuji tanpa database.
 function calculateChange(total, cashReceived) {
@@ -26,6 +34,9 @@ function calculateChange(total, cashReceived) {
     throw createServiceError('cash_received harus berupa angka minimal 0', 400);
   }
 
+  // Titik tunggal validasi kekurangan bayar.
+  // SCRUM-52 (Yoan) cukup menambahkan error code INSUFFICIENT_PAYMENT di sini
+  // agar seluruh jalur pembayaran ikut berubah.
   if (received < totalAmount) {
     throw createServiceError(
       `Uang tunai kurang dari total tagihan (total Rp${totalAmount}, diterima Rp${received})`,
@@ -37,16 +48,17 @@ function calculateChange(total, cashReceived) {
 }
 
 // Mencatat pembayaran tunai, menyimpan kembalian, dan menandai transaksi lunas.
-async function processCashPayment({ transaction_id: transactionId, cash_received: cashReceived }) {
+// Task 19: payCash(transactionId, nominal) - signature posisional sesuai kontrak service.
+async function payCash(transactionId, nominal) {
   const parsedTransactionId = Number(transactionId);
-  const parsedCashReceived = Number(cashReceived);
+  const parsedNominal = parseNominal(nominal);
 
   if (!Number.isSafeInteger(parsedTransactionId) || parsedTransactionId < 1) {
-    throw createServiceError('transaction_id harus berupa ID positif', 400);
+    throw createServiceError('transactionId harus berupa ID positif', 400);
   }
 
-  if (!Number.isFinite(parsedCashReceived) || parsedCashReceived < 0) {
-    throw createServiceError('cash_received harus berupa angka minimal 0', 400);
+  if (!Number.isFinite(parsedNominal) || parsedNominal < 0) {
+    throw createServiceError('nominal harus berupa angka minimal 0', 400);
   }
 
   return withTransaction(async (client) => {
@@ -83,7 +95,7 @@ async function processCashPayment({ transaction_id: transactionId, cash_received
     }
 
     const total = toNumber(transaction.total);
-    const changeAmount = calculateChange(total, parsedCashReceived);
+    const changeAmount = calculateChange(total, parsedNominal);
     const referenceNumber = `PAY-${Date.now()}-${randomBytes(3).toString('hex').toUpperCase()}`;
 
     const { rows: paymentRows } = await client.query(
@@ -91,7 +103,7 @@ async function processCashPayment({ transaction_id: transactionId, cash_received
          (transaction_id, method, amount_received, change_amount, reference_number)
        VALUES ($1, 'cash', $2, $3, $4)
        RETURNING id, method, amount_received, change_amount, confirmed_at, reference_number`,
-      [parsedTransactionId, roundMoney(parsedCashReceived), changeAmount, referenceNumber]
+      [parsedTransactionId, roundMoney(parsedNominal), changeAmount, referenceNumber]
     );
 
     await client.query(
@@ -132,4 +144,10 @@ async function processCashPayment({ transaction_id: transactionId, cash_received
   });
 }
 
-module.exports = { calculateChange, processCashPayment };
+// Alias kompatibilitas untuk pemanggil lama yang masih memakai bentuk objek.
+// @deprecated gunakan payCash(transactionId, nominal)
+async function processCashPayment({ transaction_id: transactionId, cash_received: nominal } = {}) {
+  return payCash(transactionId, nominal);
+}
+
+module.exports = { calculateChange, payCash, processCashPayment };

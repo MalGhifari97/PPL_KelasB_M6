@@ -79,6 +79,11 @@ generated column `transaction_items.subtotal`) sebagai **angka**, bukan string.
 |---|---|---|
 | POST | `/api/transactions/pay/cash` | Catat pembayaran tunai, hitung kembalian, set `paid` |
 
+Service yang dipanggil: `payCash(transactionId, nominal)` pada
+`backend/services/paymentService.js` (Task 19 / SCRUM-51). Alias lama
+`processCashPayment({ transaction_id, cash_received })` tetap tersedia namun
+berstatus deprecated.
+
 ```json
 { "transaction_id": 12, "cash_received": 100000 }
 ```

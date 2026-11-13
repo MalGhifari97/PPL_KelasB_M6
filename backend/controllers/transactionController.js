@@ -5,7 +5,7 @@ const {
   updateQty,
   removeItem
 } = require('../services/cartService');
-const { processCashPayment } = require('../services/paymentService');
+const { payCash } = require('../services/paymentService');
 
 function isPositiveId(value) {
   return /^[1-9]\d*$/.test(String(value));
@@ -166,7 +166,7 @@ exports.processCashPayment = async (req, res) => {
   return sendCartResponse(
     res,
     'Pembayaran tunai berhasil',
-    () => processCashPayment({ transaction_id: Number(transactionId), cash_received: amount }),
+    () => payCash(Number(transactionId), amount),
     200,
     'Gagal memproses pembayaran'
   );
