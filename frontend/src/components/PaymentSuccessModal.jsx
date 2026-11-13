@@ -74,91 +74,91 @@ const PaymentSuccessModal = ({ transactionData = {}, onNewTransaction }) => {
       justifyContent: 'center',
       zIndex: 1000,
       padding: '16px',
-      fontFamily: 'sans-serif'
+      fontFamily: 'var(--font-body)'
     }}>
       <div style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '16px',
+        backgroundColor: 'var(--surface)',
+        borderRadius: 'var(--radius-lg)',
         padding: '24px',
         maxWidth: '420px',
         width: '100%',
         maxHeight: '90vh',
         overflowY: 'auto',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+        boxShadow: 'var(--shadow-float)'
       }}>
         {/* Icon & Status */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{
             width: '48px',
             height: '48px',
-            backgroundColor: '#dcfce7',
+            backgroundColor: 'var(--success-bg)',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 12px auto'
           }}>
-            <svg style={{ width: '24px', height: '24px', color: '#16a34a' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg style={{ width: '24px', height: '24px', color: 'var(--success-solid)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>Pembayaran Berhasil</h3>
-          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+          <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: '700', color: 'var(--text)' }}>Pembayaran Berhasil</h3>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
             Nomor Transaksi: <strong>{transactionNumber}</strong> • Waktu: <strong>{formatDateTime(paidAt)}</strong>
           </div>
-          <span style={{ display: 'inline-block', backgroundColor: '#dcfce7', color: '#15803d', fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '12px', marginTop: '6px' }}>
+          <span style={{ display: 'inline-block', backgroundColor: 'var(--success-bg)', color: 'var(--success-fg)', fontSize: '0.75rem', fontWeight: '700', padding: '2px 8px', borderRadius: 'var(--radius-full)', marginTop: '6px' }}>
             ● LUNAS
           </span>
         </div>
 
         {/* Ringkasan Pembayaran */}
-        <div style={{ backgroundColor: '#f8fafc', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+        <div style={{ backgroundColor: 'var(--surface-2)', padding: '12px 16px', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#64748b' }}>Total Tagihan</span>
-            <span style={{ fontWeight: '700', color: '#0f172a' }}>{formatRupiah(totalAmount)}</span>
+            <span style={{ color: 'var(--text-muted)' }}>Total Tagihan</span>
+            <span style={{ fontWeight: '700', color: 'var(--text)' }}>{formatRupiah(totalAmount)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#64748b' }}>Metode Pembayaran</span>
-            <span style={{ fontWeight: '600', color: '#334155' }}>{paymentMethod}</span>
+            <span style={{ color: 'var(--text-muted)' }}>Metode Pembayaran</span>
+            <span style={{ fontWeight: '600', color: 'var(--neutral-fg)' }}>{paymentMethod}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#64748b' }}>Uang Diterima</span>
-            <span style={{ color: '#334155' }}>{formatRupiah(cashGiven)}</span>
+            <span style={{ color: 'var(--text-muted)' }}>Uang Diterima</span>
+            <span style={{ color: 'var(--neutral-fg)' }}>{formatRupiah(cashGiven)}</span>
           </div>
           {/* Nomor referensi dibuat backend pada kolom payments.reference_number. */}
           {referenceNumber && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-              <span style={{ color: '#94a3b8' }}>No. Referensi</span>
-              <span style={{ fontWeight: '600', color: '#475569' }}>{referenceNumber}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+              <span style={{ color: 'var(--text-muted)' }}>No. Referensi</span>
+              <span style={{ fontWeight: '600', color: 'var(--text-muted)' }}>{referenceNumber}</span>
             </div>
           )}
         </div>
 
         {/* Highlight Uang Kembalian */}
-        <div style={{ backgroundColor: '#f8fafc', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div style={{ backgroundColor: 'var(--surface-2)', padding: '12px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div>
-            <div style={{ fontSize: '10px', fontWeight: '700', color: '#64748b' }}>UANG KEMBALIAN</div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>Kembalikan kepada pelanggan</div>
+            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)' }}>UANG KEMBALIAN</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Kembalikan kepada pelanggan</div>
           </div>
-          <div style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.125rem', fontWeight: '800', color: 'var(--text)' }}>
             {formatRupiah(changeAmount)}
           </div>
         </div>
 
         {/* Rincian Item Belanja */}
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '700', color: '#64748b', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px' }}>
             <span>RINCIAN ITEM ({items.length} BARANG)</span>
             <span>Kasir: {cashierName}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {items.map((item) => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
                 <div>
-                  <div style={{ fontWeight: '600', color: '#1e293b' }}>{item.name}</div>
-                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>{item.qty}x @ {formatRupiah(item.price)}</div>
+                  <div style={{ fontWeight: '600', color: 'var(--text)' }}>{item.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.qty}x @ {formatRupiah(item.price)}</div>
                 </div>
-                <div style={{ fontWeight: '600', color: '#0f172a' }}>
+                <div style={{ fontWeight: '600', color: 'var(--text)' }}>
                   {formatRupiah(item.subtotal)}
                 </div>
               </div>
@@ -171,14 +171,14 @@ const PaymentSuccessModal = ({ transactionData = {}, onNewTransaction }) => {
           onClick={onNewTransaction}
           style={{
             width: '100%',
-            backgroundColor: '#1e3a8a',
-            color: '#ffffff',
+            backgroundColor: 'var(--primary)',
+            color: 'var(--surface)',
             fontWeight: '600',
             padding: '12px',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-sm)',
             border: 'none',
             cursor: 'pointer',
-            fontSize: '13px'
+            fontSize: '0.875rem'
           }}
         >
           ⊕ Transaksi Baru (F10 / Enter)

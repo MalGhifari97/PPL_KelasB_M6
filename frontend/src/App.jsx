@@ -27,10 +27,23 @@ const EMPTY_CART = {
 const FeedbackBanner = ({ feedback, onDismiss }) => {
   if (!feedback) return null;
 
+  // Warna mengikuti token status Panduan UI Bersama (lihat src/index.css).
   const palette = {
-    error: { background: "#fee2e2", border: "#fecaca", color: "#b91c1c" },
-    warning: { background: "#fef3c7", border: "#fde68a", color: "#b45309" },
-    info: { background: "#e0f2fe", border: "#bae6fd", color: "#0369a1" },
+    error: {
+      background: "var(--danger-bg)",
+      border: "var(--danger-solid)",
+      color: "var(--danger-fg)",
+    },
+    warning: {
+      background: "var(--pending-bg)",
+      border: "var(--pending-solid)",
+      color: "var(--pending-fg)",
+    },
+    info: {
+      background: "var(--info-bg)",
+      border: "var(--info-solid)",
+      color: "var(--info-fg)",
+    },
   };
   const tone = palette[feedback.type] ?? palette.info;
 
@@ -45,9 +58,9 @@ const FeedbackBanner = ({ feedback, onDismiss }) => {
         background: tone.background,
         border: `1px solid ${tone.border}`,
         color: tone.color,
-        borderRadius: "8px",
+        borderRadius: "var(--radius-sm)",
         padding: "10px 14px",
-        fontSize: "12px",
+        fontSize: "0.75rem",
         fontWeight: "600",
         marginBottom: "10px",
       }}
@@ -62,7 +75,7 @@ const FeedbackBanner = ({ feedback, onDismiss }) => {
           background: "transparent",
           color: tone.color,
           cursor: "pointer",
-          fontSize: "14px",
+          fontSize: "0.875rem",
           lineHeight: 1,
         }}
       >
@@ -280,24 +293,6 @@ function App() {
           <div className="brand-mark">ERP</div>
           <span className="brand-text">POS KASIR</span>
         </div>
-
-        <div className="topbar-right">
-          <div className="status-pill">
-            <span className="dot" />
-            Online
-          </div>
-          <div className="user-box">
-            <span className="user-label">Kasir:</span>
-            <span>{CASHIER_NAME}</span>
-          </div>
-          <button
-            className="avatar-button"
-            type="button"
-            aria-label="User profile"
-          >
-            ☰
-          </button>
-        </div>
       </header>
 
       <div className="content-shell">
@@ -339,7 +334,11 @@ function App() {
         </aside>
 
         {/* AREA UTAMA DI SEBELAH KANAN SIDEBAR */}
-        <main className="main-panel">
+        <main
+          className={
+            pageMode === "transaksi" ? "main-panel main-panel--form" : "main-panel"
+          }
+        >
           {pageMode === "transaksi" && (
             /* HALAMAN FORM PEMBAYARAN TUNAI (Screenshot 2026-11-01 132510.png) */
             <div style={{ width: "100%", padding: "12px" }}>
@@ -397,45 +396,48 @@ function App() {
                   </span>
                 </div>
 
-                <div className="product-list">
-                  {isLoadingProducts ? (
-                    <div className="empty-state">
-                      <div className="empty-icon">⏳</div>
-                      <div className="empty-title">Memuat produk...</div>
-                      <p>Mengambil daftar produk aktif dari server.</p>
-                    </div>
-                  ) : filteredProducts.length > 0 ? (
-                    filteredProducts.map((product) => (
-                      <div key={product.id} className="product-card">
-                        <div className="product-info">
-                          <div className="product-name">{product.name}</div>
-                          <div className="product-price">
-                            Rp {product.price.toLocaleString("id-ID")}
+                {/* Kontainer baru: scroll hanya terjadi di area katalog produk. */}
+                <div className="catalog-scroll">
+                  <div className="product-list">
+                    {isLoadingProducts ? (
+                      <div className="empty-state">
+                        <div className="empty-icon">⏳</div>
+                        <div className="empty-title">Memuat produk...</div>
+                        <p>Mengambil daftar produk aktif dari server.</p>
+                      </div>
+                    ) : filteredProducts.length > 0 ? (
+                      filteredProducts.map((product) => (
+                        <div key={product.id} className="product-card">
+                          <div className="product-info">
+                            <div className="product-name">{product.name}</div>
+                            <div className="product-price">
+                              Rp {product.price.toLocaleString("id-ID")}
+                            </div>
+                          </div>
+                          <div className="product-meta">
+                            <span className="product-code">{product.code}</span>
+                            <button
+                              type="button"
+                              className="add-button"
+                              disabled={isBusy}
+                              onClick={() => addToCart(product)}
+                            >
+                              ➕ Tambah
+                            </button>
                           </div>
                         </div>
-                        <div className="product-meta">
-                          <span className="product-code">{product.code}</span>
-                          <button
-                            type="button"
-                            className="add-button"
-                            disabled={isBusy}
-                            onClick={() => addToCart(product)}
-                          >
-                            ➕ Tambah
-                          </button>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="empty-state">
+                        <div className="empty-icon">⌕</div>
+                        <div className="empty-title">produk tidak ditemukan</div>
+                        <p>
+                          Coba ubah kata kunci atau pilih kategori lain untuk
+                          menampilkan hasil pencarian.
+                        </p>
                       </div>
-                    ))
-                  ) : (
-                    <div className="empty-state">
-                      <div className="empty-icon">⌕</div>
-                      <div className="empty-title">produk tidak ditemukan</div>
-                      <p>
-                        Coba ubah kata kunci atau pilih kategori lain untuk
-                        menampilkan hasil pencarian.
-                      </p>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </section>
 
@@ -525,7 +527,7 @@ function App() {
 
           {pageMode === "success" && (
             /* HALAMAN BERSIH POLOS SAAT MODAL SUKSES DITAMPILKAN (Screenshot 2026-11-01 132551.png) */
-            <div style={{ width: "100%", height: "100%", backgroundColor: "#f8fafc" }} />
+            <div style={{ width: "100%", height: "100%", backgroundColor: "var(--bg)" }} />
           )}
         </main>
       </div>

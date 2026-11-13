@@ -1,9 +1,59 @@
+/* ==========================================================================
+   Token desain — Panduan UI Bersama v1.0
+   Nama token mengikuti pola panduan (color/brand/primary -> --primary).
+   File lain WAJIB memakai var(...) di bawah ini, bukan kode hex langsung.
+   ========================================================================== */
 :root {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.5;
+  /* Warna merek */
+  --primary: #1f3f7a;
+  --accent: #0e7490;
+  --primary-soft: #e4ebf8;
+
+  /* Netral */
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --surface-2: #edf1f7;
+  --line: #d3dae6;
+  --line-strong: #7b89a2;
+  --text: #0f172a;
+  --text-muted: #4b5870;
+
+  /* Warna status (fg / bg / solid) */
+  --success-fg: #166534;
+  --success-bg: #dcfce7;
+  --success-solid: #16a34a;
+  --pending-fg: #7a4a00;
+  --pending-bg: #fef3c7;
+  --pending-solid: #ca8a04;
+  --danger-fg: #991b1b;
+  --danger-bg: #fee2e2;
+  --danger-solid: #dc2626;
+  --info-fg: #075985;
+  --info-bg: #e0f2fe;
+  --info-solid: #0284c7;
+  --neutral-fg: #334155;
+  --neutral-bg: #e2e8f0;
+  --neutral-solid: #64748b;
+
+  /* Tipografi */
+  --font-display: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI",
+    Roboto, Arial, sans-serif;
+  --font-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif;
+
+  /* Bentuk dan jarak */
+  --radius-sm: 6px;
+  --radius-lg: 10px;
+  --radius-full: 999px;
+  --control-h: 40px;
+  --shadow-float: 0 6px 20px rgba(15, 23, 42, 0.12);
+
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5714;
   font-weight: 400;
-  color: #1d3557;
-  background: #edf2f8;
+  color: var(--text);
+  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -24,9 +74,21 @@ body,
 
 body {
   min-width: 320px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+/* Judul selalu memakai keluarga font display (Plus Jakarta Sans). */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  color: var(--text);
 }
 
 button,
 input {
   font: inherit;
+  font-family: inherit;
 }

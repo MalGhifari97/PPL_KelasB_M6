@@ -33,8 +33,33 @@ const PORT = process.env.PORT || 5000;
 
 // Hanya listen saat dijalankan langsung (npm start), sehingga app bisa di-require untuk pengujian.
 if (require.main === module) {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Server POS Backend running di port ${PORT}`);
+  });
+
+  // Tanpa handler ini, nodemon hanya menampilkan stack trace "app crashed" yang
+  // membingungkan. Kedua kode error di bawah paling sering terjadi saat server
+  // dijalankan dua kali atau port direservasi service lain di Windows.
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(
+        `[server] Port ${PORT} sudah dipakai. Kemungkinan server ini masih berjalan di terminal lain.`
+      );
+      console.error(
+        '[server] Tutup terminal tersebut, atau ubah PORT di .env lalu samakan VITE_API_BASE_URL di frontend/.env.'
+      );
+    } else if (error.code === 'EACCES') {
+      console.error(
+        `[server] Port ${PORT} tidak boleh dipakai proses biasa (direservasi Windows/http.sys).`
+      );
+      console.error(
+        '[server] Ubah PORT di .env ke port lain (mis. 5001) lalu samakan VITE_API_BASE_URL di frontend/.env.'
+      );
+    } else {
+      console.error('[server] Gagal menjalankan server:', error.message);
+    }
+
+    process.exit(1);
   });
 }
 

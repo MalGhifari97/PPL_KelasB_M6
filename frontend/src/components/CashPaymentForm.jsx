@@ -74,41 +74,41 @@ const CashPaymentForm = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', fontFamily: 'sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', fontFamily: 'var(--font-body)' }}>
       
       {/* HEADER ATAS PEMBAYARAN (Persis Figma) */}
       <div style={{
-        backgroundColor: '#ffffff',
-        borderRadius: '12px',
+        backgroundColor: 'var(--surface)',
+        borderRadius: 'var(--radius-lg)',
         padding: '16px 20px',
-        border: '1px solid #e2e8f0',
+        border: '1px solid var(--line)',
         display: 'flex',
         justify: 'space-between',
         alignItems: 'center',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+        boxShadow: 'none'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ backgroundColor: '#1e3a8a', color: '#ffffff', padding: '10px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ backgroundColor: 'var(--primary)', color: 'var(--surface)', padding: '10px', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2" y="5" width="20" height="14" rx="2" />
               <line x1="2" y1="10" x2="22" y2="10" />
             </svg>
           </div>
           <div>
-            <div style={{ fontSize: '11px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              MODUL PEMBAYARAN KASIR • <span style={{ color: '#2563eb' }}>Jalur Cepat POS</span>
+            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              MODUL PEMBAYARAN KASIR • <span style={{ color: 'var(--primary)' }}>Jalur Cepat POS</span>
             </div>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a', marginTop: '2px' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.125rem', fontWeight: '800', color: 'var(--text)', marginTop: '2px' }}>
               Pelunasan Transaksi Tunai
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}>
-          <span style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+        <div style={{ display: 'flex', gap: '8px', fontSize: '0.875rem', color: 'var(--neutral-fg)' }}>
+          <span style={{ backgroundColor: 'var(--surface-2)', border: '1px solid var(--line)', padding: '6px 14px', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
             📅 {formatDate(now)}
           </span>
-          <span style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+          <span style={{ backgroundColor: 'var(--surface-2)', border: '1px solid var(--line)', padding: '6px 14px', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
             🕒 {formatTime(now)}
           </span>
         </div>
@@ -120,11 +120,11 @@ const CashPaymentForm = ({
         {/* KOLOM KIRI: RINCIAN TRANSAKSI KASIR */}
         <div style={{
           flex: '1',
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
+          backgroundColor: 'var(--surface)',
+          borderRadius: 'var(--radius-lg)',
           padding: '20px',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+          border: '1px solid var(--line)',
+          boxShadow: 'none',
           display: 'flex',
           flexDirection: 'column',
           justify: 'space-between'
@@ -132,17 +132,17 @@ const CashPaymentForm = ({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: '#0f172a' }}>Rincian Transaksi Kasir</h3>
-                <span style={{ fontSize: '12px', color: '#64748b' }}>Daftar item belanja pelanggan yang siap dibayar</span>
+                <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: '800', color: 'var(--text)' }}>Rincian Transaksi Kasir</h3>
+                <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Daftar item belanja pelanggan yang siap dibayar</span>
               </div>
-              <span style={{ backgroundColor: '#eff6ff', color: '#1d4ed8', fontSize: '11px', fontWeight: '700', padding: '4px 10px', borderRadius: '6px' }}>
+              <span style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary)', fontSize: '0.75rem', fontWeight: '700', padding: '4px 10px', borderRadius: 'var(--radius-sm)' }}>
                 #{transactionNumber || 'BELUM-TERSINKRON'}
               </span>
             </div>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginBottom: '16px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', marginBottom: '16px' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
+                <tr style={{ borderBottom: '1px solid var(--line)', color: 'var(--text-muted)', textAlign: 'left' }}>
                   <th style={{ paddingBottom: '10px', fontWeight: '700' }}>PRODUK</th>
                   <th style={{ paddingBottom: '10px', fontWeight: '700', textAlign: 'center' }}>QTY</th>
                   <th style={{ paddingBottom: '10px', fontWeight: '700', textAlign: 'right' }}>HARGA</th>
@@ -151,16 +151,16 @@ const CashPaymentForm = ({
               </thead>
               <tbody>
                 {cart.map((item) => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                  <tr key={item.id} style={{ borderBottom: '1px solid var(--surface-2)' }}>
                     <td style={{ padding: '12px 0' }}>
-                      <div style={{ fontWeight: '700', color: '#1e293b' }}>{item.name}</div>
-                      <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>SKU: {item.code}</div>
+                      <div style={{ fontWeight: '700', color: 'var(--text)' }}>{item.name}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>SKU: {item.code}</div>
                     </td>
-                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: '700', color: '#334155' }}>
-                      {item.qty} <span style={{ fontWeight: '400', fontSize: '11px' }}>pcs</span>
+                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: '700', color: 'var(--neutral-fg)' }}>
+                      {item.qty} <span style={{ fontWeight: '400', fontSize: '0.75rem' }}>pcs</span>
                     </td>
-                    <td style={{ padding: '12px 0', textAlign: 'right', color: '#334155' }}>Rp {item.price.toLocaleString('id-ID')}</td>
-                    <td style={{ padding: '12px 0', textAlign: 'right', fontWeight: '700', color: '#0f172a' }}>
+                    <td style={{ padding: '12px 0', textAlign: 'right', color: 'var(--neutral-fg)' }}>Rp {item.price.toLocaleString('id-ID')}</td>
+                    <td style={{ padding: '12px 0', textAlign: 'right', fontWeight: '700', color: 'var(--text)' }}>
                       Rp {(item.price * item.qty).toLocaleString('id-ID')}
                     </td>
                   </tr>
@@ -168,29 +168,29 @@ const CashPaymentForm = ({
               </tbody>
             </table>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px', color: '#64748b', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', padding: '12px 0', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.875rem', color: 'var(--text-muted)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', padding: '12px 0', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Subtotal Barang ({cart.reduce((sum, i) => sum + i.qty, 0)} pcs)</span>
-                <span style={{ fontWeight: '700', color: '#1e293b' }}>Rp {totalAmount.toLocaleString('id-ID')}</span>
+                <span style={{ fontWeight: '700', color: 'var(--text)' }}>Rp {totalAmount.toLocaleString('id-ID')}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Pajak PPN (11% Termasuk)</span>
-                <span style={{ fontWeight: '700', color: '#1e293b' }}>Rp 0</span>
+                <span style={{ fontWeight: '700', color: 'var(--text)' }}>Rp 0</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Diskon Promo Kasir</span>
-                <span style={{ fontWeight: '700', color: '#2563eb' }}>Rp 0</span>
+                <span style={{ fontWeight: '700', color: 'var(--primary)' }}>Rp 0</span>
               </div>
             </div>
           </div>
 
           <div>
-            <div style={{ backgroundColor: '#eff6ff', padding: '14px 18px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <div style={{ backgroundColor: 'var(--primary-soft)', padding: '14px 18px', borderRadius: 'var(--radius-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <div>
-                <div style={{ fontSize: '10px', fontWeight: '800', color: '#1e40af', letterSpacing: '0.5px' }}>TOTAL TAGIHAN BERSIH</div>
-                <div style={{ fontSize: '24px', fontWeight: '800', color: '#1d4ed8', marginTop: '2px' }}>Rp {totalAmount.toLocaleString('id-ID')}</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '0.5px' }}>TOTAL TAGIHAN BERSIH</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.375rem', fontWeight: '800', color: 'var(--primary)', marginTop: '2px' }}>Rp {totalAmount.toLocaleString('id-ID')}</div>
               </div>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" strokeWidth="2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="16" y1="13" x2="8" y2="13" />
@@ -198,11 +198,11 @@ const CashPaymentForm = ({
               </svg>
             </div>
 
-            <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px 14px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '10px', color: '#475569', backgroundColor: '#f8fafc' }}>
+            <div style={{ border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '12px 14px', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-muted)', backgroundColor: 'var(--surface-2)' }}>
               <span style={{ fontSize: '18px' }}>👤</span>
               <div>
-                <div style={{ fontWeight: '700', color: '#1e293b' }}>Pelanggan Umum (Walk-in)</div>
-                <div style={{ fontSize: '11px', color: '#94a3b8' }}>Tanpa ID Member • Harga Standar</div>
+                <div style={{ fontWeight: '700', color: 'var(--text)' }}>Pelanggan Umum (Walk-in)</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Tanpa ID Member • Harga Standar</div>
               </div>
             </div>
           </div>
@@ -211,11 +211,11 @@ const CashPaymentForm = ({
         {/* KOLOM KANAN: PROSES PEMBAYARAN TUNAI */}
         <div style={{
           flex: '1',
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
+          backgroundColor: 'var(--surface)',
+          borderRadius: 'var(--radius-lg)',
           padding: '20px',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+          border: '1px solid var(--line)',
+          boxShadow: 'none',
           display: 'flex',
           flexDirection: 'column',
           justify: 'space-between'
@@ -223,23 +223,23 @@ const CashPaymentForm = ({
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '800', color: '#0f172a' }}>Proses Pembayaran Tunai</h3>
-                <span style={{ fontSize: '12px', color: '#64748b' }}>Pastikan nominal fisik telah dihitung dengan benar di kasir</span>
+                <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: '800', color: 'var(--text)' }}>Proses Pembayaran Tunai</h3>
+                <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Pastikan nominal fisik telah dihitung dengan benar di kasir</span>
               </div>
-              <span style={{ backgroundColor: '#eff6ff', color: '#1e3a8a', fontSize: '11px', fontWeight: '700', padding: '4px 10px', borderRadius: '6px', border: '1px solid #bfdbfe' }}>
+              <span style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary)', fontSize: '0.75rem', fontWeight: '700', padding: '4px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
                 💵 Tunai / Cash
               </span>
             </div>
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--text-muted)' }}>
                   Uang diterima (Rp)
                 </label>
-                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Ketik angka atau klik pecahan cepat</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Ketik angka atau klik pecahan cepat</span>
               </div>
               <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontWeight: '800', fontSize: '20px', color: '#0f172a' }}>Rp</span>
+                <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontWeight: '800', fontSize: '20px', color: 'var(--text)' }}>Rp</span>
                 <input
                   type="number"
                   value={cashGiven}
@@ -251,14 +251,14 @@ const CashPaymentForm = ({
                   style={{
                     width: '100%',
                     padding: '12px 36px 12px 48px',
-                    fontSize: '22px',
+                    fontSize: '1.375rem',
                     fontWeight: '800',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: '8px',
+                    border: '1px solid var(--line-strong)',
+                    borderRadius: 'var(--radius-sm)',
                     outline: 'none',
                     boxSizing: 'border-box',
-                    backgroundColor: '#f8fafc',
-                    color: '#0f172a'
+                    backgroundColor: 'var(--surface-2)',
+                    color: 'var(--text)'
                   }}
                   required
                 />
@@ -266,17 +266,17 @@ const CashPaymentForm = ({
                   <button
                     type="button"
                     onClick={() => setCashGiven('')}
-                    style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '16px' }}
+                    style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '16px' }}
                   >
                     ✕
                   </button>
                 )}
               </div>
-              {error && <p style={{ color: '#ef4444', fontSize: '11px', marginTop: '4px' }}>{error}</p>}
+              {error && <p style={{ color: 'var(--danger-solid)', fontSize: '0.75rem', marginTop: '4px' }}>{error}</p>}
             </div>
 
             <div>
-              <div style={{ fontSize: '10px', fontWeight: '800', color: '#64748b', marginBottom: '8px', letterSpacing: '0.5px' }}>PECAHAN CEPAT KASIR</div>
+              <div style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', letterSpacing: '0.5px' }}>PECAHAN CEPAT KASIR</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                 {[
                   { label: 'Uang Pas', val: totalAmount },
@@ -290,30 +290,30 @@ const CashPaymentForm = ({
                     onClick={() => handleQuickAmount(item.val)}
                     style={{
                       padding: '10px 4px',
-                      fontSize: '11px',
-                      backgroundColor: cashGiven === item.val.toString() ? '#eff6ff' : '#f8fafc',
-                      border: `1px solid ${cashGiven === item.val.toString() ? '#2563eb' : '#e2e8f0'}`,
-                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      backgroundColor: cashGiven === item.val.toString() ? 'var(--primary-soft)' : 'var(--surface-2)',
+                      border: `1px solid ${cashGiven === item.val.toString() ? 'var(--primary)' : 'var(--line)'}`,
+                      borderRadius: 'var(--radius-sm)',
                       cursor: 'pointer',
                       textAlign: 'center',
-                      color: cashGiven === item.val.toString() ? '#1d4ed8' : '#334155'
+                      color: cashGiven === item.val.toString() ? 'var(--primary)' : 'var(--neutral-fg)'
                     }}
                   >
-                    <div style={{ fontSize: '10px', color: '#94a3b8' }}>{item.label}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.label}</div>
                     <div style={{ fontWeight: '700', marginTop: '2px' }}>Rp {item.val.toLocaleString('id-ID')}</div>
                   </button>
                 ))}
               </div>
             </div>
 
-            <div style={{ backgroundColor: '#eff6ff', padding: '14px 16px', borderRadius: '8px', border: '1px solid #dbeafe', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ backgroundColor: 'var(--primary-soft)', padding: '14px 16px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <div style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>Uang Kembalian</div>
-                <div style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Uang Kembalian</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.375rem', fontWeight: '800', color: 'var(--text)', marginTop: '2px' }}>
                   Rp {changeAmount.toLocaleString('id-ID')}
                 </div>
               </div>
-              <span style={{ fontSize: '11px', color: '#64748b' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 {changeAmount === 0 ? '(Kembalian Tidak Tersedia)' : `Rp ${paid.toLocaleString('id-ID')} - Rp ${totalAmount.toLocaleString('id-ID')} = Rp ${changeAmount.toLocaleString('id-ID')}`}
               </span>
             </div>
@@ -325,12 +325,12 @@ const CashPaymentForm = ({
                 disabled={isSubmitting}
                 style={{
                   padding: '12px 18px',
-                  fontSize: '13px',
+                  fontSize: '0.875rem',
                   fontWeight: '700',
-                  backgroundColor: '#f1f5f9',
-                  color: '#334155',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: '8px',
+                  backgroundColor: 'var(--surface-2)',
+                  color: 'var(--neutral-fg)',
+                  border: '1px solid var(--line-strong)',
+                  borderRadius: 'var(--radius-sm)',
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
                   opacity: isSubmitting ? 0.6 : 1
                 }}
@@ -343,12 +343,12 @@ const CashPaymentForm = ({
                 style={{
                   flex: 1,
                   padding: '12px 18px',
-                  fontSize: '13px',
+                  fontSize: '0.875rem',
                   fontWeight: '700',
-                  backgroundColor: isEnough && !isSubmitting ? '#1e3a8a' : '#cbd5e1',
-                  color: '#ffffff',
+                  backgroundColor: isEnough && !isSubmitting ? 'var(--primary)' : 'var(--line-strong)',
+                  color: 'var(--surface)',
                   border: 'none',
-                  borderRadius: '8px',
+                  borderRadius: 'var(--radius-sm)',
                   cursor: isEnough && !isSubmitting ? 'pointer' : 'not-allowed',
                   display: 'flex',
                   alignItems: 'center',
@@ -360,7 +360,7 @@ const CashPaymentForm = ({
                   '⏳ Memproses pembayaran...'
                 ) : (
                   <>
-                    ✓ Konfirmasi Pembayaran <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: '2px 6px', borderRadius: '4px', fontSize: '10px' }}>F9</span>
+                    ✓ Konfirmasi Pembayaran <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: '2px 6px', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem' }}>F9</span>
                   </>
                 )}
               </button>
@@ -371,17 +371,17 @@ const CashPaymentForm = ({
           <div style={{
             marginTop: '16px',
             padding: '10px 14px',
-            backgroundColor: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            fontSize: '11px',
-            color: '#64748b',
+            backgroundColor: 'var(--surface-2)',
+            border: '1px solid var(--line)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '0.75rem',
+            color: 'var(--text-muted)',
             display: 'flex',
             justify: 'space-between',
             alignItems: 'center'
           }}>
-            <span>🛈 Tekan tombol <strong style={{ color: '#1e293b' }}>Enter</strong> atau <strong style={{ color: '#1e293b' }}>F9</strong> untuk segera mencetak struk kasir</span>
-            <span style={{ fontWeight: '700', color: '#1e293b' }}>Mesin Cetak Thermal: Siap</span>
+            <span>🛈 Tekan tombol <strong style={{ color: 'var(--text)' }}>Enter</strong> atau <strong style={{ color: 'var(--text)' }}>F9</strong> untuk segera mencetak struk kasir</span>
+            <span style={{ fontWeight: '700', color: 'var(--text)' }}>Mesin Cetak Thermal: Siap</span>
           </div>
         </div>
 

@@ -67,6 +67,19 @@ Catatan:
    `npm start` langsung berhenti dengan `Cannot find module 'pg'` — gejala di
    frontend berupa banner *"Tidak dapat terhubung ke server"*.
 
+### Troubleshooting
+
+| Gejala | Penyebab | Solusi |
+|---|---|---|
+| `Error: Cannot find module 'pg'` saat `npm run dev` | `npm install` belum dijalankan di root, atau `node_modules` berisi sisa project lain | `npm install` (atau `npm ci` setelah hapus `node_modules`) |
+| `Error: listen EACCES: permission denied 0.0.0.0:5000` | Port 5000 dipakai service lain lewat `http.sys` (mis. `HerdHelper` dari Laravel Herd). Cek dengan `netsh http show servicestate` dan `netsh interface ipv4 show excludedportrange protocol=tcp` | Ganti `PORT` di `.env` (mis. `5001`), lalu samakan `VITE_API_BASE_URL` di `frontend/.env` |
+| `Error: listen EADDRINUSE ... :5001` | Server yang sama masih berjalan di terminal lain, atau ada proses lain yang listen di port itu | Tutup terminal yang menjalankan `npm run dev` lain, atau hentikan prosesnya lewat `netstat -ano \| findstr :5001`; pesan `[server] Port ... sudah dipakai` dari `index.js` menandakan kasus ini |
+| Frontend menampilkan *"Tidak dapat terhubung ke server"* | Backend mati, atau `VITE_API_BASE_URL` tidak cocok dengan `PORT` backend | Jalankan backend lebih dulu dan pastikan kedua nilai port sama |
+
+`EACCES` berbeda dari `EADDRINUSE`: `EACCES` muncul saat port berada di *exclusion
+range* Windows (sering karena Hyper-V/WSL atau service seperti Laravel Herd),
+sehingga proses apa pun tidak boleh bind ke port tersebut meskipun `netstat`
+tampak kosong.
 
 ## Struktur
 
