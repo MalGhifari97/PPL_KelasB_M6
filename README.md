@@ -33,6 +33,41 @@ Variabel `.env` yang dibutuhkan:
 Backend **tidak** memakai API key Supabase (publishable/secret). Koneksi memakai
 password database, jadi key tersebut tidak perlu disimpan di repo.
 
+### Koneksi yang dipakai proyek ini (penting)
+
+Direct connection (`db.<ref>.supabase.co`) **hanya memiliki record AAAA/IPv6**.
+Pada jaringan tanpa IPv6, koneksi gagal dengan:
+
+```
+getaddrinfo ENOTFOUND db.<ref>.supabase.co        # tidak ada A record
+(ENOTFOUND) tenant/user postgres.<ref> not found  # host pooler region salah
+```
+
+Karena itu proyek ini memakai **Session Pooler (IPv4)** dengan region yang benar-benar
+meng-host tenant-nya:
+
+```ini
+DB_HOST=aws-0-ap-south-1.pooler.supabase.com
+DB_PORT=5432
+DB_USER=postgres.mopswiuveqmlftbffjoe
+DB_NAME=postgres
+DB_SSL=true
+```
+
+Catatan:
+
+1. Host pooler **tidak selalu sama dengan region yang terlihat**; `aws-0-ap-southeast-1`
+   dan `aws-1-ap-southeast-1` membalas `tenant/user ... not found` untuk proyek ini.
+   Ambil host pasti dari dashboard: **Connect → Session pooler**.
+2. Jangan memakai port `6543` (transaction pooler) karena tidak mendukung prepared
+   statement driver `pg`.
+3. Session pooler tetap mendukung `FOR UPDATE` dan transaksi yang dipakai
+   `withTransaction` pada alur pembayaran.
+4. `npm install` di root wajib dijalankan. Tanpa itu `require('pg')` gagal dan
+   `npm start` langsung berhenti dengan `Cannot find module 'pg'` — gejala di
+   frontend berupa banner *"Tidak dapat terhubung ke server"*.
+
+
 ## Struktur
 
 ```
@@ -170,3 +205,42 @@ sehingga totalnya tepat 85.000 sesuai skenario AC.
 3. Pencarian memakai `ILIKE` karena `LIKE` PostgreSQL bersifat case-sensitive.
 4. `transaction_items.subtotal` adalah generated column, jadi tidak pernah di-INSERT.
 5. Pembayaran mengunci baris transaksi (`FOR UPDATE`) untuk mencegah pembayaran ganda.
+
+## Frontend (React + Vite)
+
+Frontend ada di `frontend/` dan memanggil API backend di atas.
+
+```bash
+cd frontend
+npm install
+cp .env.example .env     # opsional, default http://localhost:5000
+npm run dev              # http://localhost:5173
+```
+
+| Variabel | Keterangan |
+|---|---|
+| `VITE_API_BASE_URL` | Base URL backend, default `http://localhost:5000` |
+
+Backend sudah memasang `cors()`, jadi frontend di port 5173 boleh memanggil API
+tanpa proxy tambahan.
+
+### Alur integrasi
+
+1. `GET /api/products` — katalog produk (tab kategori mengikuti data produk).
+2. `POST /api/transactions` — draft `unpaid` dibuat otomatis saat produk pertama
+   ditambahkan; id-nya disimpan di state `cartState`.
+3. `POST|PATCH|DELETE /api/transactions/:id/items...` — setiap perubahan keranjang
+   langsung disinkronkan; response berisi keranjang terbaru sehingga `total`
+   selalu berasal dari server.
+4. `POST /api/transactions/pay/cash` — dipanggil `CashPaymentForm` saat
+   "Konfirmasi Pembayaran". Body `{ transaction_id, cash_received }`.
+5. `PaymentSuccessModal` menampilkan `data.transaction`, `data.payment`, dan
+   `data.items` dari response pembayaran (nomor transaksi, waktu, kasir,
+   kembalian, `reference_number`), bukan lagi data hardcoded.
+6. "Transaksi Baru" mereset state; draft berikutnya dibuat saat produk ditambah.
+
+Kode yang dipakai: `frontend/src/services/api.js` (client + normalisasi item),
+`frontend/src/components/CashPaymentForm.jsx`,
+`frontend/src/components/PaymentSuccessModal.jsx`, dan penghubungnya di
+`frontend/src/App.jsx`.
+

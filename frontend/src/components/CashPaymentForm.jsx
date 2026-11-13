@@ -1,10 +1,38 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { payCash } from '../services/api';
 
-const CashPaymentForm = ({ cart, totalAmount, onSubmitSuccess, onBack }) => {
-  const [cashGiven, setCashGiven] = useState(totalAmount.toString());
+// Waktu pada header memakai jam terminal kasir (WIB), bukan tanggal hardcoded.
+const formatDate = (date) =>
+  date.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Asia/Jakarta',
+  });
+
+const formatTime = (date) =>
+  `${date.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Jakarta',
+  })} WIB`;
+
+const CashPaymentForm = ({
+  cart = [],
+  totalAmount = 0,
+  transactionId = null,
+  transactionNumber = null,
+  onSubmitSuccess,
+  onBack,
+}) => {
+  const [cashGiven, setCashGiven] = useState(String(totalAmount));
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [now] = useState(() => new Date());
 
-  const paid = parseFloat(cashGiven) || 0;
+  const paid = Number.parseFloat(cashGiven) || 0;
   const changeAmount = Math.max(0, paid - totalAmount);
   const isEnough = paid >= totalAmount;
 
@@ -13,18 +41,36 @@ const CashPaymentForm = ({ cart, totalAmount, onSubmitSuccess, onBack }) => {
     setError('');
   };
 
-  const handleSubmit = (e) => {
+  // M6-US2: konfirmasi pembayaran dikirim ke backend. Server yang memvalidasi
+  // kekurangan bayar, menghitung kembalian, dan menandai transaksi lunas.
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+
     if (paid < totalAmount) {
       setError('Nominal pembayaran kurang dari total tagihan.');
       return;
     }
-    onSubmitSuccess({
-      totalAmount,
-      cashGiven: paid,
-      changeAmount: paid - totalAmount,
-      cart,
-    });
+
+    if (!transactionId) {
+      setError('Transaksi belum tersinkron dengan server. Kembali ke keranjang lalu coba lagi.');
+      return;
+    }
+
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const data = await payCash(transactionId, paid);
+      onSubmitSuccess?.(data);
+    } catch (apiError) {
+      // Pesan backend sudah informatif, termasuk saat code = INSUFFICIENT_PAYMENT
+      // ("Uang tunai kurang dari total tagihan (total Rp..., diterima Rp...)").
+      setError(apiError.message || 'Pembayaran gagal diproses.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -60,10 +106,10 @@ const CashPaymentForm = ({ cart, totalAmount, onSubmitSuccess, onBack }) => {
 
         <div style={{ display: 'flex', gap: '8px', fontSize: '12px', color: '#334155' }}>
           <span style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
-            📅 24 Mei 2025
+            📅 {formatDate(now)}
           </span>
           <span style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
-            🕒 14:32:10 WIB
+            🕒 {formatTime(now)}
           </span>
         </div>
       </div>
@@ -90,7 +136,7 @@ const CashPaymentForm = ({ cart, totalAmount, onSubmitSuccess, onBack }) => {
                 <span style={{ fontSize: '12px', color: '#64748b' }}>Daftar item belanja pelanggan yang siap dibayar</span>
               </div>
               <span style={{ backgroundColor: '#eff6ff', color: '#1d4ed8', fontSize: '11px', fontWeight: '700', padding: '4px 10px', borderRadius: '6px' }}>
-                #TRX-20250524-0089
+                #{transactionNumber || 'BELUM-TERSINKRON'}
               </span>
             </div>
 
@@ -197,6 +243,7 @@ const CashPaymentForm = ({ cart, totalAmount, onSubmitSuccess, onBack }) => {
                 <input
                   type="number"
                   value={cashGiven}
+                  disabled={isSubmitting}
                   onChange={(e) => {
                     setCashGiven(e.target.value);
                     setError('');
@@ -275,6 +322,7 @@ const CashPaymentForm = ({ cart, totalAmount, onSubmitSuccess, onBack }) => {
               <button
                 type="button"
                 onClick={onBack}
+                disabled={isSubmitting}
                 style={{
                   padding: '12px 18px',
                   fontSize: '13px',
@@ -283,31 +331,38 @@ const CashPaymentForm = ({ cart, totalAmount, onSubmitSuccess, onBack }) => {
                   color: '#334155',
                   border: '1px solid #cbd5e1',
                   borderRadius: '8px',
-                  cursor: 'pointer'
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  opacity: isSubmitting ? 0.6 : 1
                 }}
               >
                 ← Kembali ke keranjang
               </button>
               <button
                 type="submit"
-                disabled={!isEnough}
+                disabled={!isEnough || isSubmitting}
                 style={{
                   flex: 1,
                   padding: '12px 18px',
                   fontSize: '13px',
                   fontWeight: '700',
-                  backgroundColor: isEnough ? '#1e3a8a' : '#cbd5e1',
+                  backgroundColor: isEnough && !isSubmitting ? '#1e3a8a' : '#cbd5e1',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
-                  cursor: isEnough ? 'pointer' : 'not-allowed',
+                  cursor: isEnough && !isSubmitting ? 'pointer' : 'not-allowed',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '6px'
                 }}
               >
-                ✓ Konfirmasi Pembayaran <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: '2px 6px', borderRadius: '4px', fontSize: '10px' }}>F9</span>
+                {isSubmitting ? (
+                  '⏳ Memproses pembayaran...'
+                ) : (
+                  <>
+                    ✓ Konfirmasi Pembayaran <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: '2px 6px', borderRadius: '4px', fontSize: '10px' }}>F9</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

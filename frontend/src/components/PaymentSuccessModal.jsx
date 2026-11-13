@@ -1,7 +1,65 @@
-import React from 'react';
+const toNumber = (value, fallback = 0) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
 
-const PaymentSuccessModal = ({ transactionData, onNewTransaction }) => {
-  const { totalAmount, cashGiven, changeAmount, cart = [] } = transactionData;
+const formatRupiah = (value) => `Rp ${toNumber(value).toLocaleString('id-ID')}`;
+
+const formatDateTime = (value) => {
+  const date = value ? new Date(value) : null;
+
+  if (!date || Number.isNaN(date.getTime())) return '-';
+
+  return date.toLocaleString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Jakarta',
+  });
+};
+
+// Normalisasi item dari backend ({ product, quantity, unit_price }) sekaligus
+// tetap mendukung bentuk lokal lama ({ name, qty, price }).
+const toDisplayItem = (item = {}) => {
+  const quantity = toNumber(item.quantity ?? item.qty);
+  const unitPrice = toNumber(item.unit_price ?? item.price ?? item.product?.price);
+
+  return {
+    id: item.id ?? item.product_id ?? item.name,
+    name: item.product?.name ?? item.name ?? 'Produk',
+    qty: quantity,
+    price: unitPrice,
+    subtotal: toNumber(item.subtotal, unitPrice * quantity),
+  };
+};
+
+const PaymentSuccessModal = ({ transactionData = {}, onNewTransaction }) => {
+  // Payload utama berasal dari POST /api/transactions/pay/cash:
+  // { transaction, payment, items }. Fallback dipakai untuk bentuk data lama.
+  const transaction = transactionData.transaction ?? {};
+  const payment = transactionData.payment ?? {};
+
+  const totalAmount = toNumber(transaction.total ?? transactionData.totalAmount);
+  const cashGiven = toNumber(payment.amount_received ?? transactionData.cashGiven);
+  const changeAmount = toNumber(payment.change_amount ?? transactionData.changeAmount);
+  const transactionNumber =
+    transaction.transaction_number ?? transactionData.transactionNumber ?? '-';
+  const cashierName = transaction.cashier_name ?? transactionData.cashierName ?? '-';
+  const paidAt =
+    payment.confirmed_at ?? transaction.paid_at ?? transactionData.paidAt ?? null;
+  const referenceNumber = payment.reference_number ?? null;
+  const paymentMethod =
+    payment.method === 'cash' || !payment.method ? '💵 Tunai (Cash)' : payment.method;
+
+  const rawItems = Array.isArray(transactionData.items)
+    ? transactionData.items
+    : Array.isArray(transactionData.cart)
+      ? transactionData.cart
+      : [];
+  const items = rawItems.map(toDisplayItem);
 
   return (
     <div style={{
@@ -24,6 +82,8 @@ const PaymentSuccessModal = ({ transactionData, onNewTransaction }) => {
         padding: '24px',
         maxWidth: '420px',
         width: '100%',
+        maxHeight: '90vh',
+        overflowY: 'auto',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
       }}>
         {/* Icon & Status */}
@@ -44,7 +104,7 @@ const PaymentSuccessModal = ({ transactionData, onNewTransaction }) => {
           </div>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>Pembayaran Berhasil</h3>
           <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
-            Nomor Transaksi: <strong>TRX-20250524-0089</strong> • Waktu: <strong>24 Mei 2025, 14:32 WIB</strong>
+            Nomor Transaksi: <strong>{transactionNumber}</strong> • Waktu: <strong>{formatDateTime(paidAt)}</strong>
           </div>
           <span style={{ display: 'inline-block', backgroundColor: '#dcfce7', color: '#15803d', fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '12px', marginTop: '6px' }}>
             ● LUNAS
@@ -55,16 +115,23 @@ const PaymentSuccessModal = ({ transactionData, onNewTransaction }) => {
         <div style={{ backgroundColor: '#f8fafc', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#64748b' }}>Total Tagihan</span>
-            <span style={{ fontWeight: '700', color: '#0f172a' }}>Rp {totalAmount.toLocaleString('id-ID')}</span>
+            <span style={{ fontWeight: '700', color: '#0f172a' }}>{formatRupiah(totalAmount)}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#64748b' }}>Metode Pembayaran</span>
-            <span style={{ fontWeight: '600', color: '#334155' }}>💵 Tunai (Cash)</span>
+            <span style={{ fontWeight: '600', color: '#334155' }}>{paymentMethod}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#64748b' }}>Uang Diterima</span>
-            <span style={{ color: '#334155' }}>Rp {cashGiven.toLocaleString('id-ID')}</span>
+            <span style={{ color: '#334155' }}>{formatRupiah(cashGiven)}</span>
           </div>
+          {/* Nomor referensi dibuat backend pada kolom payments.reference_number. */}
+          {referenceNumber && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+              <span style={{ color: '#94a3b8' }}>No. Referensi</span>
+              <span style={{ fontWeight: '600', color: '#475569' }}>{referenceNumber}</span>
+            </div>
+          )}
         </div>
 
         {/* Highlight Uang Kembalian */}
@@ -74,25 +141,25 @@ const PaymentSuccessModal = ({ transactionData, onNewTransaction }) => {
             <div style={{ fontSize: '11px', color: '#94a3b8' }}>Kembalikan kepada pelanggan</div>
           </div>
           <div style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a' }}>
-            Rp {changeAmount.toLocaleString('id-ID')}
+            {formatRupiah(changeAmount)}
           </div>
         </div>
 
         {/* Rincian Item Belanja */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '700', color: '#64748b', marginBottom: '8px' }}>
-            <span>RINCIAN ITEM ({cart.length} BARANG)</span>
-            <span>Kasir: Budi S.</span>
+            <span>RINCIAN ITEM ({items.length} BARANG)</span>
+            <span>Kasir: {cashierName}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {cart.map((item) => (
+            {items.map((item) => (
               <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
                 <div>
                   <div style={{ fontWeight: '600', color: '#1e293b' }}>{item.name}</div>
-                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>{item.qty}x @ Rp {item.price.toLocaleString('id-ID')}</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>{item.qty}x @ {formatRupiah(item.price)}</div>
                 </div>
                 <div style={{ fontWeight: '600', color: '#0f172a' }}>
-                  Rp {(item.price * item.qty).toLocaleString('id-ID')}
+                  {formatRupiah(item.subtotal)}
                 </div>
               </div>
             ))}
