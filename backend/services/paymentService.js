@@ -1,5 +1,5 @@
 const { randomBytes } = require('crypto');
-const { createServiceError, withTransaction } = require('../utils/dbTransaction');
+const { ERROR_CODES, createServiceError, withTransaction } = require('../utils/dbTransaction');
 const { getCart } = require('./cartService');
 
 function toNumber(value, fallback = 0) {
@@ -34,13 +34,14 @@ function calculateChange(total, cashReceived) {
     throw createServiceError('cash_received harus berupa angka minimal 0', 400);
   }
 
-  // Titik tunggal validasi kekurangan bayar.
-  // SCRUM-52 (Yoan) cukup menambahkan error code INSUFFICIENT_PAYMENT di sini
-  // agar seluruh jalur pembayaran ikut berubah.
+  // Titik tunggal validasi kekurangan bayar (SCRUM-52).
+  // Error code INSUFFICIENT_PAYMENT dipasang di sini agar payCash,
+  // processCashPayment (alias lama), dan endpoint /pay/cash ikut berubah.
   if (received < totalAmount) {
     throw createServiceError(
       `Uang tunai kurang dari total tagihan (total Rp${totalAmount}, diterima Rp${received})`,
-      400
+      400,
+      ERROR_CODES.INSUFFICIENT_PAYMENT
     );
   }
 

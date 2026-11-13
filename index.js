@@ -16,17 +16,17 @@ app.use('/api/transactions', transactionRoutes);
 
 // Endpoint tidak dikenal
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'Endpoint tidak ditemukan', data: null });
+  res.status(404).json({ success: false, code: null, message: 'Endpoint tidak ditemukan', data: null });
 });
 
 // Error handler terakhir agar body JSON rusak tetap dibalas dalam bentuk JSON.
 app.use((error, req, res, next) => {
   if (error.type === 'entity.parse.failed') {
-    return res.status(400).json({ success: false, message: 'Body request bukan JSON valid', data: null });
+    return res.status(400).json({ success: false, code: null, message: 'Body request bukan JSON valid', data: null });
   }
 
   console.error('[server]', error.message);
-  return res.status(500).json({ success: false, message: 'Terjadi kesalahan pada server', data: null });
+  return res.status(500).json({ success: false, code: null, message: 'Terjadi kesalahan pada server', data: null });
 });
 
 const PORT = process.env.PORT || 5000;

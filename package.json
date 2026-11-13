@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "node --test backend/tests",
+    "test": "node --test backend/tests/*.test.js",
     "db:check": "node scripts/db-check.js",
     "test:e2e": "node scripts/e2e-check.js"
   },

@@ -108,6 +108,28 @@ Response:
 }
 ```
 
+### Format error
+
+Semua response gagal memakai envelope yang sama. Field `code` diisi kode error bisnis
+yang stabil, atau `null` bila tidak ada kode khusus (SCRUM-52):
+
+```json
+{
+  "success": false,
+  "code": "INSUFFICIENT_PAYMENT",
+  "message": "Uang tunai kurang dari total tagihan (total Rp85000, diterima Rp84000)",
+  "data": null
+}
+```
+
+| `code` | HTTP | Kondisi |
+|---|---|---|
+| `INSUFFICIENT_PAYMENT` | 400 | `cash_received` kurang dari total tagihan. Tidak ada baris `payments` yang dibuat dan transaksi tetap `unpaid`. |
+| `null` | 4xx / 5xx | Error lain: input tidak valid, produk/transaksi tidak ditemukan, konflik status, atau kesalahan server. |
+
+Kode ini dipakai frontend untuk membedakan kekurangan bayar dari kesalahan validasi lain
+tanpa perlu mencocokkan teks pesan.
+
 ### Kode status
 
 | Kode | Kondisi |

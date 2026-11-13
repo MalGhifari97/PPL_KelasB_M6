@@ -9,6 +9,7 @@ exports.searchProducts = async (req, res) => {
     if (products.length === 0) {
       return res.status(404).json({
         success: false,
+        code: null,
         message: 'Produk tidak ditemukan',
         data: []
       });
@@ -22,6 +23,7 @@ exports.searchProducts = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
+      code: null,
       message: 'Gagal mencari produk',
       data: null
     });

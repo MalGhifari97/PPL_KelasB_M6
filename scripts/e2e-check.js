@@ -146,6 +146,11 @@ async function main() {
       cash_received: 50000
     });
     check('uang kurang ditolak 400', kurang.status === 400, JSON.stringify(kurang.body));
+    check(
+      'kode error INSUFFICIENT_PAYMENT',
+      kurang.body?.code === 'INSUFFICIENT_PAYMENT',
+      JSON.stringify(kurang.body)
+    );
 
     const cart3 = await api('GET', `/api/transactions/${trx3}`);
     check('transaksi tetap unpaid setelah gagal bayar', cart3.body?.data?.payment_status === 'unpaid');

@@ -31,6 +31,8 @@ async function sendCartResponse(
     const statusCode = error.statusCode || 500;
     return res.status(statusCode).json({
       success: false,
+      // errorCode hanya diisi untuk error bisnis yang punya kode stabil (SCRUM-52).
+      code: error.errorCode || null,
       message: statusCode === 500 ? fallbackMessage : error.message,
       data: null
     });
@@ -48,6 +50,7 @@ exports.createDraftTransaction = async (req, res) => {
   if (typeof cashier_name !== 'string' || cashier_name.trim().length === 0) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'cashier_name harus berupa teks dan tidak boleh kosong',
       data: null
     });
@@ -73,6 +76,7 @@ exports.getDraftTransaction = async (req, res) => {
   if (!isPositiveId(transactionId)) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'transactionId harus berupa ID positif',
       data: null
     });
@@ -90,6 +94,7 @@ exports.addToCart = async (req, res) => {
   if (!isPositiveId(transactionId) || !isPositiveId(productId)) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'transactionId dan product_id harus berupa ID positif',
       data: null
     });
@@ -107,6 +112,7 @@ exports.updateQty = async (req, res) => {
   if (!isPositiveId(transactionId) || !isPositiveId(itemId)) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'transactionId dan itemId harus berupa ID positif',
       data: null
     });
@@ -115,6 +121,7 @@ exports.updateQty = async (req, res) => {
   if (!Number.isSafeInteger(quantity) || quantity < 1) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'Kuantitas harus berupa bilangan bulat minimal 1',
       data: null
     });
@@ -131,6 +138,7 @@ exports.removeItem = async (req, res) => {
   if (!isPositiveId(transactionId) || !isPositiveId(itemId)) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'transactionId dan itemId harus berupa ID positif',
       data: null
     });
@@ -148,6 +156,7 @@ exports.processCashPayment = async (req, res) => {
   if (!isPositiveId(transactionId)) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'transaction_id harus berupa ID positif',
       data: null
     });
@@ -158,6 +167,7 @@ exports.processCashPayment = async (req, res) => {
   if (!Number.isFinite(amount) || amount < 0) {
     return res.status(400).json({
       success: false,
+      code: null,
       message: 'cash_received harus berupa angka minimal 0',
       data: null
     });

@@ -1,9 +1,18 @@
 const pool = require('../config/db');
 
+// Kode error bisnis yang stabil untuk dikonsumsi klien API (SCRUM-52).
+// Dinamai errorCode, bukan code, karena driver pg memakai error.code untuk
+// SQLSTATE (mis. 23505/23514) sehingga nama `code` berisiko tertukar.
+const ERROR_CODES = Object.freeze({
+  INSUFFICIENT_PAYMENT: 'INSUFFICIENT_PAYMENT'
+});
+
 // Error dengan status HTTP agar controller dapat memetakan ke response yang tepat.
-function createServiceError(message, statusCode) {
+// errorCode bersifat opsional sehingga pemanggil lama tetap kompatibel.
+function createServiceError(message, statusCode, errorCode = null) {
   const error = new Error(message);
   error.statusCode = statusCode;
+  error.errorCode = errorCode;
   return error;
 }
 
@@ -29,4 +38,4 @@ async function withTransaction(callback) {
   }
 }
 
-module.exports = { createServiceError, withTransaction };
+module.exports = { ERROR_CODES, createServiceError, withTransaction };

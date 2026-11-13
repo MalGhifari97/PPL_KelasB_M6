@@ -27,10 +27,13 @@ test('AC-02 M6-US2: total 85.000 dibayar 85.000 menghasilkan kembalian 0', () =>
   assert.equal(calculateChange(85000, 85000), 0);
 });
 
-test('pembayaran kurang dari total ditolak dengan status 400', () => {
+test('pembayaran kurang dari total ditolak dengan status 400 dan kode INSUFFICIENT_PAYMENT', () => {
   assert.throws(
     () => calculateChange(85000, 84000),
-    (error) => error.statusCode === 400 && /kurang dari total tagihan/.test(error.message)
+    (error) =>
+      error.statusCode === 400 &&
+      error.errorCode === 'INSUFFICIENT_PAYMENT' &&
+      /kurang dari total tagihan/.test(error.message)
   );
 });
 
