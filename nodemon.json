@@ -1,0 +1,7 @@
+{
+  "watch": ["index.js", "backend", "scripts"],
+  "ext": "js,json",
+  "ignore": ["frontend", "database", "node_modules", "**/node_modules/**", "**/*.test.js"],
+  "delay": 300,
+  "verbose": false
+}
